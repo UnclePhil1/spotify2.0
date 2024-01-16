@@ -2,26 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+html,body, :root{
+  height: 100%;
+  background: black;
+  color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@keyframes colorChange {
+  0% {
+    background: linear-gradient(to bottom, #38a169, #38a16900); /* Green */
+  }
+  30% {
+    background: linear-gradient(to bottom, #4299e1, #4299e109); /* Blue */
+  }
+  60% {
+    background: linear-gradient(to bottom, #e53e3e, #e53e3e02); /* Red */
+  }
+  90% {
+    background: linear-gradient(to bottom, #7a38a1, #38a16907); /* Green */
+  }
+  100% {
+    background: linear-gradient(to bottom, #38a169, #38a16900); /* Back to Green */
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.animation-color-change {
+  animation: colorChange 15s infinite; /* 3 colors x 3 seconds each = 9 seconds total */
+  border: transparent;
+  box-shadow: transparent;
 }
