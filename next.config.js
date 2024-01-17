@@ -4,8 +4,7 @@ const nextConfig = {
         domains: [
             "vkcfgyyetmhqkafgrrfs.supabase.co"
         ]
-    },
-    distDir: 'build'
+    }
 }
 
 module.exports = nextConfig

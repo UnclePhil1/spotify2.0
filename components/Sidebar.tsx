@@ -34,7 +34,7 @@ const Sidebar: React.FC<SiderbarProps> = ({ children, songs }) => {
         href: "/search",
       },
     ],
-    []
+    [pathname]
   );
   return (
     <div className={twMerge(`
