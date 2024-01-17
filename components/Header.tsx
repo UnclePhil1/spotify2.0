@@ -1,14 +1,9 @@
 "use client";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { BiSearch } from "react-icons/bi";
+import { BiMenu, BiSearch } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
-import {
-  RxCaretLeft,
-  RxCaretRight,
-  RxThickArrowLeft,
-  RxThickArrowRight,
-} from "react-icons/rx";
+import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import { twMerge } from "tailwind-merge";
 import Button from "./Button";
 import useAuthModal from "@/hooks/useAuthModal";
@@ -17,10 +12,14 @@ import { useUser } from "@/hooks/useUser";
 import { FaUserAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
 import usePlayer from "@/hooks/usePlayer";
+import { AiOutlinePlus } from "react-icons/ai";
+import useUploadModal from "@/hooks/useUploadModal";
+import { Song } from "@/types";
 
 interface HeaderProps {
   children: React.ReactNode;
   className?: string;
+  songs: Song[];
 }
 
 const Header: React.FC<HeaderProps> = ({ children, className }) => {
@@ -29,6 +28,17 @@ const Header: React.FC<HeaderProps> = ({ children, className }) => {
   const supabaseClient = useSupabaseClient();
   const { user } = useUser();
   const player = usePlayer();
+  const uploadModal = useUploadModal();
+  const [isSliderOpen, setIsSliderOpen] = useState(false);
+
+  const onClick = () => {
+    // Handle Upload Module
+    if (!user) {
+      return authModal.onOpen();
+    }
+    setIsSliderOpen(false);
+    return uploadModal.onOpen();
+  };
 
   const handleLogout = async () => {
     // Handle Logout
@@ -45,8 +55,6 @@ const Header: React.FC<HeaderProps> = ({ children, className }) => {
     }
   };
 
-  const [isSliderOpen, setIsSliderOpen] = useState(false);
-
   const handleToggleSlider = () => {
     setIsSliderOpen(!isSliderOpen);
   };
@@ -61,7 +69,7 @@ const Header: React.FC<HeaderProps> = ({ children, className }) => {
         className
       )}
     >
-      <div className="w-full mb-4 flex items-center justify-between">
+      <div className="w-full mb-4 flex justify-end items-end md:items-center md:justify-between">
         <div className="hidden md:flex gap-x-2 items-center">
           <button
             onClick={() => router.back()}
@@ -76,87 +84,7 @@ const Header: React.FC<HeaderProps> = ({ children, className }) => {
             <RxCaretRight size={35} className="text-white" />
           </button>
         </div>
-        {/* <div className="relative float-right">
-          <button
-            className="rounded-full p-2 bg-white justify-center items-center hover:opacity-75 transition"
-            onClick={handleToggleSlider}
-          >
-            {isSliderOpen ? (
-              <RxThickArrowRight size={20} className="text-black" />
-            ) : (
-              <RxThickArrowLeft size={20} className="text-black" />
-            )}
-          </button>
-          {isSliderOpen && (
-            <div className="absolute flex gap-4 p-2 top-0 right-0 bg-neutral-600 rounded-full w-auto transition-transform transform translate-x-full">
-              <button
-                className="rounded-full p-2 bg-white justify-center items-center hover:opacity-75 transition"
-                onClick={() => router.push("/")}
-              >
-                <HiHome className="text-black" size={15} />
-              </button>
-              <button
-                className="rounded-full p-2 bg-white justify-center items-center hover:opacity-75 transition"
-                onClick={() => router.push("/search")}
-              >
-                <BiSearch className="text-black" size={15} />
-              </button>
-              <div
-                className="
-            flex
-            justify-between
-            items-center
-            gap-x-4
-        "
-              >
-                {user ? (
-                  <div className="flex gap-x-4 items-center">
-                    <Button
-                      onClick={handleLogout}
-                      className="bg-white px-6 py-2"
-                    >
-                      Logout
-                    </Button>
-                    <Button
-                      onClick={() => router.push("/account")}
-                      className="bg-white"
-                    >
-                      <FaUserAlt />
-                    </Button>
-                  </div>
-                ) : (
-                  <>
-                    <div>
-                      <Button
-                        onClick={authModal.onOpen}
-                        className="
-                    bg-transparent
-                    text-neutral-300
-                    font-medium
-                "
-                      >
-                        SignUp
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        onClick={authModal.onOpen}
-                        className="
-                    bg-white
-                    px-6
-                    py-2
-                "
-                      >
-                        LogIn
-                      </Button>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
-        </div> */}
-        <div className="flex md:hidden gap-x-2 items-center">
+        <div className="hidden gap-x-2 items-center">
           <button
             className="
             rounded-full
@@ -195,8 +123,11 @@ const Header: React.FC<HeaderProps> = ({ children, className }) => {
         "
         >
           {user ? (
-            <div className="flex gap-x-4 items-center">
-              <Button onClick={handleLogout} className="bg-white px-6 py-2">
+            <div className="flex relative gap-x-4 items-end justify-end">
+              <Button
+                onClick={handleLogout}
+                className="bg-white px-6 py-2 hidden md:block"
+              >
                 Logout
               </Button>
               <Button
@@ -205,6 +136,67 @@ const Header: React.FC<HeaderProps> = ({ children, className }) => {
               >
                 <FaUserAlt />
               </Button>
+              <Button
+                className="bg-white md:hidden"
+                onClick={handleToggleSlider}
+              >
+                <BiMenu className="text-black" size={20} />
+              </Button>
+              {isSliderOpen && (
+                <div className="bg-neutral-900 shadow-md flex flex-col gap-4 backdrop-blur-sm absolute justify-center items-center inset-0 p-4 w-auto h-[200px] rounded-lg top-12 right-0 z-10">
+                  <button
+                    className="
+                    rounded-full
+                    p-2
+                    bg-white
+                    justify-center
+                    items-center    
+                    hover:opacity-75
+                    transition
+                    w-10
+                    h-10
+                    flex
+                  "
+                    onClick={() => router.push("/")}
+                  >
+                    <HiHome className="text-black" size={20} />
+                  </button>
+                  <button
+                    className="
+                      rounded-full
+                      p-2
+                      bg-white
+                      justify-center
+                      items-center    
+                      flex
+                      hover:opacity-75
+                      transition
+                      w-10
+                      h-10
+                    "
+                    onClick={() => router.push("/search")}
+                  >
+                    <BiSearch className="text-black" size={20} />
+                  </button>
+                  <button
+                    onClick={onClick}
+                    className="
+                      rounded-full
+                      p-2
+                      bg-white
+                      justify-center
+                      items-center
+                      flex
+                      hover:opacity-75
+                      transition
+                      w-10
+                      h-10
+                    "
+                  >
+                    <AiOutlinePlus className="text-black" size={20} />
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <>
