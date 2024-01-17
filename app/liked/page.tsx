@@ -20,7 +20,7 @@ const Liked = async () => {
       overflow-y-auto
     "
     >
-      <Header>
+      <Header songs={[]}>
         <div className="mt-20">
           <div className="flex flex-col md:flex-row items-center gap-x-4">
             <div className="relative h-32 w-32 lg:h-44 lg:w-44">
