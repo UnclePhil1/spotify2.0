@@ -17,7 +17,7 @@ export default async function Home() {
     h-full
     w-full
     overflow-hidden
-    oveflow-y-auto
+    overflow-y-auto
    "
     >
       <Header>

@@ -31,6 +31,7 @@ const PageContent: React.FC<PageContentProps> = ({ songs }) => {
     2xl:grid-cols-8
     gap-4
     mt-4
+    overflow-x-auto
     ">
         {
             songs.map((item) => (
